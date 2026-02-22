@@ -1,0 +1,761 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Orbitron:wght@500;700&family=Rajdhani:wght@500;600;700&display=swap');
+
+:root {
+  --bg-dark: #0a0b10;
+  --bg-panel: rgba(20, 24, 32, 0.85);
+  --text-primary: #e0e6ed;
+  --text-secondary: #94a3b8;
+  --accent-green: #00ff41;
+  --accent-red: #ff2a2a;
+  --accent-blue: #00d4ff;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --font-heading: 'Orbitron', 'Rajdhani', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --glass: blur(10px);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  overflow: hidden;
+  /* Prevent scrollbars */
+  height: 100vh;
+  width: 100vw;
+}
+
+#app {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 320px;
+  background: var(--bg-panel);
+  backdrop-filter: var(--glass);
+  border-right: 1px solid var(--border-color);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  z-index: 1000;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.5);
+  overflow-y: auto;
+  /* Enable scrolling if content is too tall */
+}
+
+.brand h1 {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.brand .accent {
+  color: var(--accent-green);
+}
+
+.status {
+  font-family: var(--font-heading);
+  color: var(--accent-blue);
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+}
+
+.status::before {
+  content: '●';
+  margin-right: 6px;
+  color: var(--accent-green);
+  animation: blink 2s infinite;
+}
+
+@keyframes blink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* Controls */
+.control-group h2 {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+}
+
+.input-wrapper {
+  margin-bottom: 1.5rem;
+}
+
+.input-wrapper label {
+  display: block;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+}
+
+.coord-inputs {
+  display: flex;
+  gap: 0.5rem;
+}
+
+input[type="number"],
+input[type="range"] {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0.5rem;
+  font-family: var(--font-heading);
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: var(--border-color);
+  border-radius: 2px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  background: var(--accent-green);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 10px var(--accent-green);
+}
+
+/* Buttons */
+.btn {
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+}
+
+.btn.primary {
+  background: var(--accent-green);
+  color: #000;
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+}
+
+.btn.primary:hover {
+  background: #33ff66;
+  box-shadow: 0 0 25px rgba(0, 255, 65, 0.5);
+}
+
+.btn.secondary {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  margin-top: 1rem;
+}
+
+.btn.secondary:hover {
+  border-color: var(--accent-red);
+  color: var(--accent-red);
+}
+
+/* Map Container */
+.map-container {
+  flex: 1;
+  position: relative;
+  background-color: #1a1d24;
+  /* Fallback */
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* Grid Overlay (Visual only for now) */
+.grid-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  z-index: 2;
+}
+
+/* Dashboard */
+.dashboard {
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+  display: flex;
+  gap: 1rem;
+  background: var(--bg-panel);
+  backdrop-filter: var(--glass);
+  padding: 1.5rem;
+  border-top: 2px solid var(--accent-blue);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
+  z-index: 1000;
+  border-radius: 4px;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  min-width: 120px;
+  border-right: 1px solid var(--border-color);
+  padding-right: 1rem;
+}
+
+.metric:last-child {
+  border-right: none;
+  padding-right: 0;
+}
+
+.metric .label {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.metric .value {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.metric .value small {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.metric .value.risk-low {
+  color: var(--accent-green);
+}
+
+.metric .value.risk-med {
+  color: #ffe600;
+}
+
+.metric .value.risk-high {
+  color: var(--accent-red);
+}
+
+/* Instructions */
+.instructions {
+  margin-top: auto;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.instructions ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.instructions li {
+  margin-bottom: 0.5rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--border-color);
+}
+
+.instructions .green {
+  color: var(--accent-green);
+}
+
+.instructions .red {
+  color: var(--accent-red);
+}
+
+.instructions .blue {
+  color: var(--accent-blue);
+}
+
+/* Leaflet Customizations */
+.leaflet-container {
+  background: #0a0b10 !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background: var(--bg-panel);
+  color: var(--text-primary);
+  border-radius: 0;
+  border: 1px solid var(--accent-blue);
+  backdrop-filter: var(--glass);
+}
+
+.leaflet-popup-tip {
+  background: var(--bg-panel);
+}
+
+/* Telemetry Panel */
+#telemetry-panel {
+  background: rgba(0, 255, 65, 0.05);
+  border: 1px solid rgba(0, 255, 65, 0.2);
+  padding: 1rem;
+  margin-bottom: 2rem;
+}
+
+#telemetry-panel h2 {
+  color: var(--accent-green);
+  border-bottom-color: rgba(0, 255, 65, 0.3);
+}
+
+.telemetry-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.t-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.t-item .label {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+.t-item .value {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.status-indicator {
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border-color);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  display: flex;
+  justify-content: space-between;
+}
+
+.status-indicator .val {
+  font-family: var(--font-heading);
+  color: var(--text-primary);
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* Mission Controls */
+.mission-controls {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.action-btn {
+  padding: 0.8rem 0.5rem;
+  font-size: 0.8rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  flex: 1;
+  clip-path: none;
+  /* Reset clip-path for smaller buttons */
+}
+
+.action-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.action-btn.warning:hover:not(:disabled) {
+  background: #ffe600;
+  color: #000;
+  border-color: #ffe600;
+}
+
+.action-btn.danger:hover:not(:disabled) {
+  background: var(--accent-red);
+  color: #fff;
+  border-color: var(--accent-red);
+}
+
+/* ============================================= */
+/*  WEATHER INTEL PANEL                          */
+/* ============================================= */
+
+.intel-panel {
+  background: rgba(0, 20, 40, 0.5);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  border-radius: 6px;
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.08);
+}
+
+.intel-header {
+  background: linear-gradient(90deg, rgba(0, 212, 255, 0.12), transparent);
+  padding: 0.6rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.15);
+}
+
+.intel-icon {
+  font-size: 1rem;
+}
+
+.intel-title {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  color: var(--accent-blue);
+  letter-spacing: 2px;
+}
+
+.weather-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  padding: 0.8rem;
+}
+
+.w-item {
+  display: flex;
+  flex-direction: column;
+  padding: 0.4rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.w-item.full-width {
+  grid-column: span 2;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 0.6rem;
+  background: transparent;
+}
+
+.w-item .label {
+  font-size: 0.6rem;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+  margin-bottom: 2px;
+}
+
+.w-item .value {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+/* ============================================= */
+/*  AEGIS AI CHATBOT                            */
+/* ============================================= */
+
+.chatbot {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 360px;
+  max-height: 480px;
+  background: rgba(12, 15, 25, 0.92);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  z-index: 2000;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    0 0 20px rgba(0, 212, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chatbot.minimized .chatbot-body {
+  display: none;
+}
+
+.chatbot.minimized {
+  max-height: 48px;
+  border-radius: 24px;
+  width: 200px;
+}
+
+.chatbot-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 1rem;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.12), rgba(0, 255, 65, 0.05));
+  border-bottom: 1px solid rgba(0, 212, 255, 0.15);
+  cursor: pointer;
+  user-select: none;
+}
+
+.chatbot-avatar {
+  font-size: 1.3rem;
+  animation: botPulse 3s infinite ease-in-out;
+}
+
+@keyframes botPulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.chatbot-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.chatbot-name {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  color: var(--accent-blue);
+  letter-spacing: 2px;
+}
+
+.chatbot-online {
+  font-size: 0.6rem;
+  color: var(--accent-green);
+  letter-spacing: 1px;
+}
+
+.chatbot-minimize {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.chatbot-minimize:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.chatbot-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.chatbot-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  max-height: 340px;
+  min-height: 200px;
+  scroll-behavior: smooth;
+}
+
+.chatbot-messages::-webkit-scrollbar {
+  width: 3px;
+}
+
+.chatbot-messages::-webkit-scrollbar-thumb {
+  background: rgba(0, 212, 255, 0.4);
+  border-radius: 3px;
+}
+
+/* Chat Bubbles */
+.chat-bubble {
+  max-width: 85%;
+  padding: 0.6rem 0.8rem;
+  border-radius: 12px;
+  animation: bubbleIn 0.3s ease;
+  position: relative;
+}
+
+@keyframes bubbleIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.chat-bubble.ai {
+  align-self: flex-start;
+  background: rgba(0, 212, 255, 0.08);
+  border: 1px solid rgba(0, 212, 255, 0.15);
+  border-bottom-left-radius: 2px;
+}
+
+.chat-bubble.user {
+  align-self: flex-end;
+  background: rgba(0, 255, 65, 0.08);
+  border: 1px solid rgba(0, 255, 65, 0.2);
+  border-bottom-right-radius: 2px;
+}
+
+.chat-bubble.system {
+  align-self: center;
+  background: rgba(255, 230, 0, 0.06);
+  border: 1px solid rgba(255, 230, 0, 0.15);
+  max-width: 95%;
+  text-align: center;
+  font-size: 0.7rem;
+}
+
+.chat-bubble.alert {
+  align-self: center;
+  background: rgba(255, 42, 42, 0.08);
+  border: 1px solid rgba(255, 42, 42, 0.2);
+  max-width: 95%;
+  text-align: center;
+}
+
+.bubble-sender {
+  font-family: var(--font-heading);
+  font-size: 0.6rem;
+  letter-spacing: 1.5px;
+  margin-bottom: 3px;
+}
+
+.chat-bubble.ai .bubble-sender {
+  color: var(--accent-blue);
+}
+
+.chat-bubble.user .bubble-sender {
+  color: var(--accent-green);
+}
+
+.bubble-text {
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--text-primary);
+}
+
+.chat-bubble.system .bubble-text {
+  color: #ffe600;
+}
+
+.chat-bubble.alert .bubble-text {
+  color: var(--accent-red);
+}
+
+.bubble-time {
+  font-size: 0.55rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  text-align: right;
+}
+
+/* Input Bar */
+.chatbot-input-bar {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.7rem 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.chatbot-input-bar input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.chatbot-input-bar input:focus {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 8px rgba(0, 212, 255, 0.15);
+}
+
+.chatbot-input-bar input::placeholder {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+#chat-send-btn {
+  background: linear-gradient(135deg, var(--accent-blue), #0098b3);
+  border: none;
+  color: #fff;
+  font-size: 1rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#chat-send-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.4);
+}
+
+/* Risk Colors */
+.risk-low {
+  color: var(--accent-green) !important;
+}
+
+.risk-med {
+  color: #ffe600 !important;
+}
+
+.risk-high {
+  color: var(--accent-red) !important;
+}
