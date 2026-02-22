@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drone Path Optimization | Defense Tech</title>
+  <script type="module" crossorigin src="/assets/index-DkXV0NbP.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-DCY1891e.css">
+</head>
+
+<body>
+  <div id="app">
+    <!-- Sidebar Controls -->
+    <aside class="sidebar">
+      <div class="brand">
+        <h1>DRONE<span class="accent">OPT</span></h1>
+        <p class="status">SYSTEM: ONLINE</p>
+      </div>
+
+      <div class="control-group">
+        <h2>Mission Coordinates</h2>
+        <div class="input-wrapper">
+          <label>Start Point (Lat, Lng)</label>
+          <div class="coord-inputs">
+            <input type="number" id="start-lat" placeholder="Lat" step="0.0001">
+            <input type="number" id="start-lng" placeholder="Lng" step="0.0001">
+          </div>
+        </div>
+        <div class="input-wrapper">
+          <label>Target Point (Lat, Lng)</label>
+          <div class="coord-inputs">
+            <input type="number" id="target-lat" placeholder="Lat" step="0.0001">
+            <input type="number" id="target-lng" placeholder="Lng" step="0.0001">
+          </div>
+        </div>
+      </div>
+
+      <!-- Weather Intelligence -->
+      <div class="intel-panel">
+        <div class="intel-header">
+          <span class="intel-icon">🌦️</span>
+          <span class="intel-title">WEATHER INTEL</span>
+        </div>
+        <div class="weather-grid">
+          <div class="w-item">
+            <span class="label">WIND</span>
+            <span class="value" id="weather-wind">-- <small>km/h</small></span>
+          </div>
+          <div class="w-item">
+            <span class="label">VISIBILITY</span>
+            <span class="value" id="weather-vis">--%</span>
+          </div>
+          <div class="w-item full-width">
+            <span class="label">SAFETY</span>
+            <span class="value" id="weather-status">SCANNING...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Telemetry -->
+      <div class="control-group" id="telemetry-panel">
+        <h2>Live Telemetry</h2>
+        <div class="telemetry-grid">
+          <div class="t-item">
+            <span class="label">LAT</span>
+            <span class="value" id="telemet-lat">--.----</span>
+          </div>
+          <div class="t-item">
+            <span class="label">LNG</span>
+            <span class="value" id="telemet-lng">--.----</span>
+          </div>
+          <div class="t-item">
+            <span class="label">SPEED</span>
+            <span class="value" id="telemet-speed">0 <small>km/h</small></span>
+          </div>
+          <div class="t-item">
+            <span class="label">BATTERY</span>
+            <span class="value" id="telemet-battery">100%</span>
+          </div>
+        </div>
+        <div class="status-indicator" id="mission-status">
+          STATUS: <span class="val">READY</span>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <h2>Mission Constraints</h2>
+        <div class="input-wrapper">
+          <label for="battery-limit">Battery Limit (km)</label>
+          <input type="number" id="battery-limit" value="100" min="1" max="100">
+          <div class="progress-bar">
+            <div class="fill" style="width: 60%"></div>
+          </div>
+        </div>
+        <div class="input-wrapper">
+          <label for="risk-slider">Max Risk Tolerance</label>
+          <input type="range" id="risk-slider" min="0" max="100" value="30">
+          <span id="risk-value">30%</span>
+        </div>
+        <div class="input-wrapper checkbox">
+          <label for="terrain-toggle">Avoid Difficult Terrain</label>
+          <input type="checkbox" id="terrain-toggle" checked>
+          <span class="toggle-slider"></span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="optimize-btn" class="btn primary">
+          <span class="icon">⚡</span> OPTIMIZE ROUTE
+        </button>
+        <div class="mission-controls">
+          <button id="start-mission-btn" class="btn action-btn" disabled>▶ START</button>
+          <button id="pause-mission-btn" class="btn action-btn warning" disabled>⏸ PAUSE</button>
+          <button id="abort-mission-btn" class="btn action-btn danger" disabled>✖ ABORT</button>
+        </div>
+        <button id="clear-btn" class="btn secondary">RESET SYSTEM</button>
+      </div>
+
+      <div class="instructions">
+        <h3>Directives</h3>
+        <ul>
+          <li>Click map to set <span class="green">START</span> & <span class="blue">TARGET</span></li>
+          <li>Drag to draw <span class="red">NO-FLY ZONES</span></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Main Map Area -->
+    <main class="map-container">
+      <div id="map"></div>
+      <div class="grid-overlay"></div>
+    </main>
+
+    <!-- AI Chatbot (Floating over map, bottom-right) -->
+    <div class="chatbot" id="chatbot">
+      <div class="chatbot-header" id="chatbot-toggle">
+        <div class="chatbot-avatar">🤖</div>
+        <div class="chatbot-info">
+          <span class="chatbot-name">AEGIS AI</span>
+          <span class="chatbot-online">● ONLINE</span>
+        </div>
+        <button class="chatbot-minimize" id="chatbot-min-btn">—</button>
+      </div>
+      <div class="chatbot-body" id="chatbot-body">
+        <div class="chatbot-messages" id="chat-messages">
+          <div class="chat-bubble ai">
+            <div class="bubble-sender">AEGIS</div>
+            <div class="bubble-text">Systems online. I'm monitoring your mission in real-time. Type <b>help</b> for
+              commands.</div>
+            <div class="bubble-time"></div>
+          </div>
+        </div>
+        <div class="chatbot-input-bar">
+          <input type="text" id="chat-input" placeholder="Ask AEGIS AI..." autocomplete="off" />
+          <button id="chat-send-btn">➤</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics Dashboard -->
+    <div class="dashboard">
+      <div class="metric">
+        <span class="label">DISTANCE</span>
+        <span class="value" id="total-distance">0.00 <small>km</small></span>
+      </div>
+      <div class="metric">
+        <span class="label">EST. BATTERY</span>
+        <span class="value" id="battery-usage">0%</span>
+      </div>
+      <div class="metric">
+        <span class="label">RISK SCORE</span>
+        <span class="value risk-low" id="risk-score">LOW</span>
+      </div>
+      <div class="metric">
+        <span class="label">TIME SAVED</span>
+        <span class="value" id="time-saved">--:--</span>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
