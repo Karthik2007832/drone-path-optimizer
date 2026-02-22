@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+    base: '/drone-path-optimizer/',
     server: {
         host: true,
         allowedHosts: [
