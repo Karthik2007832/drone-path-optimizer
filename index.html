@@ -6,8 +6,8 @@
   <link rel="icon" type="image/svg+xml" href="/drone-path-optimizer/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Drone Path Optimization | Defense Tech</title>
-  <script type="module" crossorigin src="/drone-path-optimizer/assets/index-DkXV0NbP.js"></script>
-  <link rel="stylesheet" crossorigin href="/drone-path-optimizer/assets/index-DCY1891e.css">
+  <script type="module" crossorigin src="/drone-path-optimizer/assets/index-T0mAPgky.js"></script>
+  <link rel="stylesheet" crossorigin href="/drone-path-optimizer/assets/index-CTzJ34sB.css">
 </head>
 
 <body>
@@ -106,6 +106,25 @@
         </div>
       </div>
 
+      <!-- Re-Routing Control -->
+      <div class="control-group reroute-panel">
+        <h2>Re-Routing Control</h2>
+        <div class="input-wrapper checkbox">
+          <label for="auto-reroute-toggle">Automatic Re-Routing</label>
+          <input type="checkbox" id="auto-reroute-toggle" checked>
+          <span class="toggle-slider"></span>
+        </div>
+        <div class="reroute-status-row">
+          <span class="label">STATUS</span>
+          <span class="reroute-status-badge" id="reroute-mode-badge">AUTO: ON</span>
+        </div>
+        <div class="reroute-status-row">
+          <span class="label">ROUTE</span>
+          <span class="route-type-badge original" id="route-type-badge">ORIGINAL</span>
+        </div>
+        <button id="manual-reroute-btn" class="btn action-btn reroute-btn" disabled>🔄 RE-ROUTE NOW</button>
+      </div>
+
       <div class="actions">
         <button id="optimize-btn" class="btn primary">
           <span class="icon">⚡</span> OPTIMIZE ROUTE
@@ -178,7 +197,7 @@
         <span class="value" id="time-saved">--:--</span>
       </div>
     </div>
-  </div>
+  </div>
 </body>
 
 </html>
